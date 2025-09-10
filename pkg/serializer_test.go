@@ -66,6 +66,52 @@ func TestSerialize(t *testing.T) {
 			input:    int64(-123456789),
 			expected: []byte{0xD3, 0xFF, 0xFF, 0xFF, 0xFF, 0xF8, 0xA4, 0x32, 0xEB},
 		},
+		{
+			name:     "float32",
+			input:    float32(3.14),
+			expected: []byte{0xCA, 0x40, 0x48, 0xF5, 0xC3},
+		},
+		{
+			name:     "float64",
+			input:    float64(3.141592653589793),
+			expected: []byte{0xCB, 0x40, 0x09, 0x21, 0xFB, 0x54, 0x44, 0x2D, 0x18},
+		},
+		{
+			name:     "fix string",
+			input:    "hello",
+			expected: []byte{0xA5, 'h', 'e', 'l', 'l', 'o'},
+		},
+		{
+			name:     "str8",
+			input:    string(make([]byte, 100)),
+			expected: append([]byte{0xD9, 100}, make([]byte, 100)...),
+		},
+		{
+			name:     "str16",
+			input:    string(make([]byte, 7000)),
+			expected: append([]byte{0xDA, 0x1B, 0x58}, make([]byte, 7000)...),
+		},
+		{
+			name:    "str32",
+			input:   string(make([]byte, 70000)),
+			expected: append([]byte{0xDB, 0x00, 0x01, 0x11, 0x70}, make([]byte, 70000)...),
+			
+		},
+		{
+			name:     "bin8",
+			input:    []byte{0x01, 0x02, 0x03, 0x04, 0x05},
+			expected: []byte{0xC4, 0x05, 0x01, 0x02, 0x03, 0x04, 0x05},
+		},
+		{
+			name:     "bin16",
+			input:    make([]byte, 300),
+			expected: append([]byte{0xC5, 0x01, 0x2C}, make([]byte, 300)...),
+		},
+		{
+			name:     "bin32",
+			input:    make([]byte, 70000),
+			expected: append([]byte{0xC6, 0x00, 0x01, 0x11, 0x70}, make([]byte, 70000)...),
+		},
 	}
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {

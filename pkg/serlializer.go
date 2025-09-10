@@ -51,30 +51,30 @@ func Serialize(object interface{}) ([]byte, error) {
 		if strLen < 32 {
 			result = append(result, 0xA0|byte(strLen))
 			result = append(result, []byte(objType)...)
-		} else if strLen < 2^8 {
+		} else if strLen < int(math.Pow(2, 8)) {
 			result = append(result, 0xD9)
 			result = append(result, byte(strLen))
 			result = append(result, []byte(objType)...)
-		} else if strLen < 2^16 {
+		} else if strLen < int(math.Pow(2, 16)) {
 			result = append(result, 0xDA)
 			result = append(result, byte(strLen>>8), byte(strLen))
 			result = append(result, []byte(objType)...)
-		} else if strLen < 2^32 {
+		} else if strLen < int(math.Pow(2, 32)) {
 			result = append(result, 0xDB)
 			result = append(result, byte(strLen>>24), byte(strLen>>16), byte(strLen>>8), byte(strLen))
 			result = append(result, []byte(objType)...)
 		}
 	case []byte:
 		byteLen := len(objType)
-		if byteLen < 2^8 {
+		if byteLen < int(math.Pow(2, 8)) {
 			result = append(result, 0xC4)
 			result = append(result, byte(byteLen))
 			result = append(result, []byte(objType)...)
-		} else if byteLen < 2^16 {
+		} else if byteLen < int(math.Pow(2, 16)) {
 			result = append(result, 0xC5)
 			result = append(result, byte(byteLen>>8), byte(byteLen))
 			result = append(result, []byte(objType)...)
-		} else if byteLen < 2^32 {
+		} else if byteLen < int(math.Pow(2, 32)) {
 			result = append(result, 0xC6)
 			result = append(result, byte(byteLen>>24), byte(byteLen>>16), byte(byteLen>>8), byte(byteLen))
 			result = append(result, []byte(objType)...)
