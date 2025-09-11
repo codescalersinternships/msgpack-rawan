@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 )
@@ -43,28 +44,38 @@ func TestSerialize(t *testing.T) {
 		},
 		{
 			name:     "uint64",
-			input:    uint64(18446744073709551615),
-			expected: []byte{0xCF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
+			input:    uint64(5000000000),
+			expected: []byte{0xCF, 0x00, 0x00, 0x00, 0x01, 0x2A, 0x05, 0xF2, 0x00},
+		},
+		{
+			name:     "positive fixint",
+			input:    100,
+			expected: []byte{0x64},
+		},
+		{
+			name:     "negative fixint",
+			input:    -20,
+			expected: []byte{0xEC},
 		},
 		{
 			name:     "int8",
-			input:    int8(-128),
+			input:    -128,
 			expected: []byte{0xD0, 0x80},
 		},
 		{
 			name:     "int16",
-			input:    int16(-300),
+			input:    -300,
 			expected: []byte{0xD1, 0xFE, 0xD4},
 		},
 		{
 			name:     "int32",
-			input:    int32(-70000),
+			input:    -70000,
 			expected: []byte{0xD2, 0xFF, 0xFE, 0xEE, 0x90},
 		},
 		{
 			name:     "int64",
-			input:    int64(-123456789),
-			expected: []byte{0xD3, 0xFF, 0xFF, 0xFF, 0xFF, 0xF8, 0xA4, 0x32, 0xEB},
+			input:    -5000000000,
+			expected: []byte{0xD3, 0xFF, 0xFF, 0xFF, 0xFE, 0xD5, 0xFA, 0x0E, 0x00},
 		},
 		{
 			name:     "float32",
@@ -92,10 +103,9 @@ func TestSerialize(t *testing.T) {
 			expected: append([]byte{0xDA, 0x1B, 0x58}, make([]byte, 7000)...),
 		},
 		{
-			name:    "str32",
-			input:   string(make([]byte, 70000)),
+			name:     "str32",
+			input:    string(make([]byte, 70000)),
 			expected: append([]byte{0xDB, 0x00, 0x01, 0x11, 0x70}, make([]byte, 70000)...),
-			
 		},
 		{
 			name:     "bin8",
@@ -111,6 +121,16 @@ func TestSerialize(t *testing.T) {
 			name:     "bin32",
 			input:    make([]byte, 70000),
 			expected: append([]byte{0xC6, 0x00, 0x01, 0x11, 0x70}, make([]byte, 70000)...),
+		},
+		{
+			name:     "fix array",
+			input:    []any{1, 2, 3},
+			expected: []byte{0x93, 0x01, 0x02, 0x03},
+		},
+		{
+			name:     "array16",
+			input:    make([]any, 200),
+			expected: append([]byte{0xDC, 0x00, 0xC8}, bytes.Repeat([]byte{0xC0}, 200)...),
 		},
 	}
 	for _, tc := range testcases {
