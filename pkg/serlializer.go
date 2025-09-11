@@ -113,20 +113,45 @@ func Serialize(object interface{}) ([]byte, error) {
 		result = append(result, []byte(objType)...)
 	case []any:
 		arrLen := len(objType)
-		if arrLen < 16 {
+		if arrLen < 16 { //fixarray
 			result = append(result, 0x90|byte(arrLen))
 
-		} else if arrLen < int(math.Pow(2, 16)) {
+		} else if arrLen < int(math.Pow(2, 16)) { //array16
 			result = append(result, 0xDC)
 			result = append(result, byte(arrLen>>8), byte(arrLen))
 
-		} else if arrLen < int(math.Pow(2, 32)) {
+		} else if arrLen < int(math.Pow(2, 32)) { //array32
 			result = append(result, 0xDD)
 			result = append(result, byte(arrLen>>24), byte(arrLen>>16), byte(arrLen>>8), byte(arrLen))
 		}
 
 		for _, element := range objType {
 			serializedElement, err := Serialize(element)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, serializedElement...)
+		}
+	case map[any]any:
+		mapLen := len(objType)
+		if mapLen < 16 { //fixmap
+			result = append(result, 0x80|byte(mapLen))
+		} else if mapLen < int(math.Pow(2, 16)) { //map16
+			result = append(result, 0xDE)
+			result = append(result, byte(mapLen>>8), byte(mapLen))
+		} else if mapLen < int(math.Pow(2, 32)) { //map32
+			result = append(result, 0xDF)
+			result = append(result, byte(mapLen>>24), byte(mapLen>>16), byte(mapLen>>8), byte(mapLen))
+		}
+		for key, value := range objType {
+			serializedElement, err := Serialize(key)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, serializedElement...)
+
+
+			serializedElement, err = Serialize(value)
 			if err != nil {
 				return nil, err
 			}
