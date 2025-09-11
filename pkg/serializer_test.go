@@ -148,8 +148,8 @@ func TestSerialize(t *testing.T) {
 			expected: []byte{0x93, 0x01, 0x92, 0x02, 0x03, 0x04},
 		},
 		{
-			name:"empty map",
-			input: map[any]any{},
+			name:     "empty map",
+			input:    map[any]any{},
 			expected: []byte{0x80},
 		},
 		{
