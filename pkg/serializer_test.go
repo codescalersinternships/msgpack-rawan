@@ -123,6 +123,11 @@ func TestSerialize(t *testing.T) {
 			expected: append([]byte{0xC6, 0x00, 0x01, 0x11, 0x70}, make([]byte, 70000)...),
 		},
 		{
+			name:     "empty array",
+			input:    []any{},
+			expected: []byte{0x90},
+		},
+		{
 			name:     "fix array",
 			input:    []any{1, 2, 3},
 			expected: []byte{0x93, 0x01, 0x02, 0x03},
@@ -131,6 +136,29 @@ func TestSerialize(t *testing.T) {
 			name:     "array16",
 			input:    make([]any, 200),
 			expected: append([]byte{0xDC, 0x00, 0xC8}, bytes.Repeat([]byte{0xC0}, 200)...),
+		},
+		{
+			name:     "array32",
+			input:    make([]any, 70000),
+			expected: append([]byte{0xDD, 0x00, 0x01, 0x11, 0x70}, bytes.Repeat([]byte{0xC0}, 70000)...),
+		},
+		{
+			name:     "nested array",
+			input:    []any{1, []any{2, 3}, 4},
+			expected: []byte{0x93, 0x01, 0x92, 0x02, 0x03, 0x04},
+		},
+		{
+			name:"empty map",
+			input: map[any]any{},
+			expected: []byte{0x80},
+		},
+		{
+			name: "fix map",
+			input: map[any]any{
+				"a": 1,
+				"b": true,
+			},
+			expected: []byte{0x82, 0xA1, 'a', 0x01, 0xA1, 'b', 0xC3},
 		},
 	}
 	for _, tc := range testcases {
