@@ -144,7 +144,7 @@ func TestDeserialize(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			result, _, err := Deserialize(tc.input)
+			result, err := Deserialize(tc.input)
 			if err != nil {
 				t.Fatalf("Unexpected error: %v", err)
 			}

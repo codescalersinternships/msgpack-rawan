@@ -2,7 +2,12 @@ package pkg
 
 import "math"
 
-func Deserialize(bytes []byte) (interface{}, int, error) {
+func Deserialize(bytes []byte) (interface{}, error) {
+	result,_,err:= deserialize(bytes)
+	return result, err
+}
+
+func deserialize(bytes []byte) (interface{}, int, error) {
 	var result interface{}
 
 	switch bytes[0] {
@@ -81,7 +86,7 @@ func Deserialize(bytes []byte) (interface{}, int, error) {
 		arr := make([]any, 0, arrayLen)
 		rest := bytes[1:]
 		for i := 0; i < arrayLen; i++ {
-			elem, n, _ := Deserialize(rest)
+			elem, n, _ := deserialize(rest)
 			arr = append(arr, elem)
 			rest = rest[n:]
 		}
@@ -93,7 +98,7 @@ func Deserialize(bytes []byte) (interface{}, int, error) {
 
 		rest := bytes[3:]
 		for i := 0; i < arrayLen; i++ {
-			elem, n, _ := Deserialize(rest)
+			elem, n, _ := deserialize(rest)
 			arr = append(arr, elem)
 			rest = rest[n:]
 		}
@@ -105,7 +110,7 @@ func Deserialize(bytes []byte) (interface{}, int, error) {
 
 		rest := bytes[5:]
 		for i := 0; i < arrayLen; i++ {
-			elem, n, _ := Deserialize(rest)
+			elem, n, _ := deserialize(rest)
 			arr = append(arr, elem)
 			rest = rest[n:]
 		}
@@ -119,11 +124,11 @@ func Deserialize(bytes []byte) (interface{}, int, error) {
 		rest := bytes[1:]
 		consumed := 1
 		for i := 0; i < mapLen; i++ {
-			key, n, _ := Deserialize(rest)
+			key, n, _ := deserialize(rest)
 			consumed += n
 			rest = rest[n:]
 
-			val, n, _ := Deserialize(rest)
+			val, n, _ := deserialize(rest)
 			consumed += n
 			rest = rest[n:]
 			temp_map[key] = val

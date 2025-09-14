@@ -12,7 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	deserialized, _, err := msgpack.Deserialize(bytes)
+	deserialized, err := msgpack.Deserialize(bytes)
 	if err != nil {
 		panic(err)
 	}
