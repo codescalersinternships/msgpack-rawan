@@ -135,7 +135,7 @@ func Deserialize(bytes []byte) (interface{}, int, error) {
 			result = int(bytes[0])
 			return result, 1, nil
 		} else if bytes[0] >= 0xE0 { // negative fixint
-			result = int8(bytes[0])
+			result = int(int8(bytes[0]))
 			return result, 1, nil
 		}
 	}

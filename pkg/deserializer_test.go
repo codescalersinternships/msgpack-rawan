@@ -119,27 +119,27 @@ func TestDeserialize(t *testing.T) {
 		},
 		{
 			name:     "empty map",
-			input: []byte{0x80},
-			expected:    map[any]any{},
+			input:    []byte{0x80},
+			expected: map[any]any{},
 		},
 		{
-			name: "fix map",
+			name:  "fix map",
 			input: []byte{0x82, 0xA1, 'a', 0x01, 0xA1, 'b', 0xC3},
 			expected: map[any]any{
 				"a": 1,
 				"b": true,
 			},
 		},
-		// {
-		// 	name:     "positive fixint",
-		// 	input:    []byte{0x64},
-		// 	expected: 100,
-		// },
-		// {
-		// 	name:     "negative fixint",
-		// 	input:    []byte{0xEC},
-		// 	expected: -20,
-		// },
+		{
+			name:     "positive fixint",
+			input:    []byte{0x64},
+			expected: 100,
+		},
+		{
+			name:     "negative fixint",
+			input:    []byte{0xEC},
+			expected: -20,
+		},
 	}
 
 	for _, tc := range testcases {
@@ -150,6 +150,7 @@ func TestDeserialize(t *testing.T) {
 			}
 			if !reflect.DeepEqual(result, tc.expected) {
 				t.Errorf("Expected %v, got %v", tc.expected, result)
+				t.Errorf("Type of expected: %T, Type of got: %T", tc.expected, result)
 			}
 		})
 	}
